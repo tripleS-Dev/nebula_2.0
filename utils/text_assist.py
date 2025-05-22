@@ -14,7 +14,8 @@ def text_draw(
     match pos:
         case 0:
 
-            offset = (0,7)
+            y_offset = (1/5)*font_size + 1
+            offset = (0,y_offset)
 
             font = ImageFont.truetype(f"{BASE_DIR}/fonts/{font}", font_size)
 

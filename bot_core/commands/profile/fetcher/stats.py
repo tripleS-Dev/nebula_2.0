@@ -19,7 +19,6 @@ async def get_stats(address: str, artist: str):
         async with session.get(url, headers=headers) as response:
             if response.status == 200:  # Request successful
                 result = await response.json()
-                pprint(result)
 
                 for one in result:
                     if one['artistName'] == artist.lower():
@@ -31,7 +30,7 @@ async def get_stats(address: str, artist: str):
                     'members': top_three_stats(result_artist['members']),
                     'seasons': normalize_counts_integer(result_artist['seasons'])
                 }
-                pprint(data)
+                #pprint(data)
                 return data
             else:  # Request failed
                 print(

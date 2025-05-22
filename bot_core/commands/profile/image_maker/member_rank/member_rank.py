@@ -4,19 +4,10 @@ from PIL import Image
 from PIL.ImageDraw import ImageDraw
 
 from config import member_color
-from utils import round_square, text_draw, text_size, paste_correctly
+from utils import round_square, text_draw, text_size, paste_correctly, List, Dict
 from pathlib import Path
 
 
-data = {'members': [{'count': 139, 'name': 'DaHyun', 'percentage': 70},
-            {'count': 37, 'name': 'YeonJi', 'percentage': 10},
-            {'count': 34, 'name': 'YooYeon', 'percentage': 10}],
- 'seasons': [{'count': 3, 'name': 'Atom01'},
-             {'count': 14, 'name': 'Binary01'},
-             {'count': 12, 'name': 'Cream01'},
-             {'count': 38, 'name': 'Divine01'},
-             {'count': 33, 'name': 'Ever01'}],
- 'total': 376}
 
 def adjust_member_percentages_int(data, min_pct=0.15):
     """
@@ -80,7 +71,7 @@ def adjust_member_percentages_int(data, min_pct=0.15):
 
     r1 = {'members': adjusted_members}
     # etc 항목 분리
-    etc_item = next((m for m in r1['members'] if m['name'] == 'etc'), None)
+    etc_item = next((m for m in r1['members'] if m['name'] == 'etc'), {'percentage': 0})
 
     # etc를 제외한 리스트
     filtered_members = [m for m in r1['members'] if m['name'] != 'etc']
@@ -94,148 +85,153 @@ def adjust_member_percentages_int(data, min_pct=0.15):
     return {'members': filtered_members}, etc_item['percentage']
 
 
-"""for item in data['members']:
-    if item['percentage'] < 15:
-        item['percentage'] = 15"""
-# 최소 너비 15%
-
 BASE_DIR = Path(__file__).resolve().parent
 
-blank = Image.new('RGBA', (600, 240), (0,0,0,0))
-etc_left = Image.open(f'{BASE_DIR}/resources/etc_left.png')
-etc_right = Image.open(f'{BASE_DIR}/resources/etc_right.png')
-etc_middle = Image.open(f'{BASE_DIR}/resources/etc_middle.png')
-line = Image.open(f'{BASE_DIR}/resources/line.png')
-etc_txt = Image.open(f'{BASE_DIR}/resources/etc_txt.png')
-num_txt = [1,2,3]
-num_txt[0] = Image.open(f'{BASE_DIR}/resources/1.png')
-num_txt[1] = Image.open(f'{BASE_DIR}/resources/2.png')
-num_txt[2] = Image.open(f'{BASE_DIR}/resources/3.png')
 
-#etc = 100 - sum(max(d['percentage'], 15) for d in data['members'])
-#etc = 100 - sum(max(d['percentage'], 15) for d in data['members'])
+def member_rank(data) -> Image.Image:
+    blank = Image.new('RGBA', (600, 240), (0,0,0,0))
+    etc_left = Image.open(f'{BASE_DIR}/resources/etc_left.png')
+    etc_right = Image.open(f'{BASE_DIR}/resources/etc_right.png')
+    etc_middle = Image.open(f'{BASE_DIR}/resources/etc_middle.png')
+    line = Image.open(f'{BASE_DIR}/resources/line.png')
+    etc_txt = Image.open(f'{BASE_DIR}/resources/etc_txt.png')
+    num_txt = [1,2,3]
+    num_txt[0] = Image.open(f'{BASE_DIR}/resources/1.png')
+    num_txt[1] = Image.open(f'{BASE_DIR}/resources/2.png')
+    num_txt[2] = Image.open(f'{BASE_DIR}/resources/3.png')
 
-data_refine, etc = adjust_member_percentages_int(data)
-print(data_refine, etc)
+    #etc = 100 - sum(max(d['percentage'], 15) for d in data['members'])
+    #etc = 100 - sum(max(d['percentage'], 15) for d in data['members'])
 
-
-pad = 0
-count = 0
-sums = 0
-pp = 100
-for member in data_refine['members']:
-    sums += member['count']
-    pp -= member['percentage']
-
-    print(member['name'])
-
-    if count == 0:
-        rounds = 16
-    else:
-        rounds = 0
-
-    img = round_square(
-        size=(600+pad, 240-40*count),
-        radii=(rounds, 16, rounds, 32),  # (tl, tr, br, bl)
-        color=member_color[member['name'].lower()],
-        iOS=True if count == 0 else False
-    )
-    blank = paste_correctly(blank, (0, 40 * count), img)
-
-    if 1000 <= member['count'] < 10000:
-        count_font_size = 22
-        x_offset = 0
-        y_offset = 4
-        padding = 4
-    elif 10000 <= member['count']:
-        count_font_size = 22
-        x_offset = 9
-        y_offset = 4
-        padding = 2
-    else:
-        count_font_size = 30
-        x_offset = 0
-        y_offset = 0
-        padding = 6
+    data_refine, etc = adjust_member_percentages_int(data)
 
 
-    x, y = text_size('HalvarBreit-XBd-5.ttf', count_font_size, str(member['count']))
-    print(x, y)
+    pad = 0
+    count = 0
+    sums = 0
+    pp = 100
+    for member in data_refine['members']:
+        sums += member['count']
+        pp -= member['percentage']
 
-    img = round_square(
-        size=(x+padding*2, 30),
-        radii=(6, 6, 6, 6),  # (tl, tr, br, bl)
-        color=(8,9,10,255),
-        iOS=True
-    )
-    blank = paste_correctly(blank, (600+pad-10-x-padding*2+x_offset, 200), img)
 
-    draw = ImageDraw(blank)
+        if count == 0:
+            rounds = 16
+        else:
+            rounds = 0
 
-    text_draw(draw, (600+pad-10-x-padding+x_offset, 205+y_offset), 'HalvarBreit-XBd-5.ttf', count_font_size, str(member['count']), (255,255,255))
-    text_draw(draw, (600+pad-10, 175), 'HalvarBreit-XBd-5.ttf', 30, str(data['members'][count]['percentage'])+'%', (7,8,9), pos=2)
-    text_draw(draw, (57, 10+40*count), 'HalvarBreit-XBd-5.ttf', 30, member['name'], (0,0,0))
+        img = round_square(
+            size=(600+pad, 240-40*count),
+            radii=(rounds, 16, rounds, 32),  # (tl, tr, br, bl)
+            color=member_color[member['name'].lower()],
+            iOS=True if count == 0 else False
+        )
+        blank = paste_correctly(blank, (0, 40 * count), img)
 
-    blank = paste_correctly(blank, (13 ,10+40*count), num_txt[count])
+        if 1000 <= member['count'] < 10000:
+            count_font_size = 22
+            x_offset = 0
+            y_offset = 4
+            padding = 4
+        elif 10000 <= member['count']:
+            count_font_size = 22
+            x_offset = 9
+            y_offset = 4
+            padding = 2
+        else:
+            count_font_size = 30
+            x_offset = 0
+            y_offset = 0
+            padding = 6
 
-    count += 1
-    pad -= member['percentage']*6 # if member['percentage'] >= 15 else 15*6
-    print(pad)
+
+        x, y = text_size('HalvarBreit-XBd-5.ttf', count_font_size, str(member['count']))
+
+        img = round_square(
+            size=(x+padding*2, 30),
+            radii=(6, 6, 6, 6),  # (tl, tr, br, bl)
+            color=(8,9,10,255),
+            iOS=True
+        )
+        blank = paste_correctly(blank, (600+pad-10-x-padding*2+x_offset, 200), img)
+
+        draw = ImageDraw(blank)
+
+        text_draw(draw, (600+pad-10-x-padding+x_offset, 205+y_offset), 'HalvarBreit-XBd-5.ttf', count_font_size, str(member['count']), (255,255,255))
+        text_draw(draw, (600+pad-10, 175), 'HalvarBreit-XBd-5.ttf', 30, str(data['members'][count]['percentage'])+'%', (7,8,9), pos=2)
+        text_draw(draw, (57, 10+40*count), 'HalvarBreit-XBd-5.ttf', 30, member['name'], (0,0,0))
+
+        blank = paste_correctly(blank, (13 ,10+40*count), num_txt[count])
+
+        count += 1
+        pad -= member['percentage']*6 # if member['percentage'] >= 15 else 15*6
 
 
 
-if not etc <= 0:
-    etc_middle_size = etc * 6 - 38
+    if not etc <= 0:
+        etc_middle_size = etc * 6 - 38
 
-    if etc_middle_size < 90 - 38:
-        etc_middle_size = 90 - 38
+        if etc_middle_size < 90 - 38:
+            etc_middle_size = 90 - 38
 
-    etc_middle = etc_middle.resize((etc_middle_size, 120))
+        etc_middle = etc_middle.resize((etc_middle_size, 120))
 
-    blank.paste(etc_right, (22+etc_middle_size, 120), etc_right)
-    blank.paste(etc_left, (0, 120), etc_left)
-    blank.paste(etc_middle, (22, 120), etc_middle)
-    blank.paste(etc_txt, (12, 130), etc_txt)
-
-
-    etc_count = data['total'] - sums
-
-    if 1000 <= etc_count < 10000:
-        count_font_size = 22
-        x_offset = 0
-        y_offset = 4
-        padding = 4
-    elif 10000 <= etc_count:
-        count_font_size = 22
-        x_offset = 9
-        y_offset = 4
-        padding = 2
-    else:
-        count_font_size = 30
-        x_offset = 0
-        y_offset = 0
-        padding = 6
-
-    x, y = text_size('HalvarBreit-XBd-5.ttf', count_font_size, str(etc_count))
-    print(x, y)
+        blank.paste(etc_right, (22+etc_middle_size, 120), etc_right)
+        blank.paste(etc_left, (0, 120), etc_left)
+        blank.paste(etc_middle, (22, 120), etc_middle)
+        blank.paste(etc_txt, (12, 130), etc_txt)
 
 
-    img = round_square(
-        size=(x + padding * 2, 30),
-        radii=(6, 6, 6, 6),  # (tl, tr, br, bl)
-        color=(42, 51, 58, 255),
-        iOS=True
-    )
-    blank = paste_correctly(blank, (600+pad-10-x-padding*2+x_offset, 200), img)
+        etc_count = data['total'] - sums
+
+        if 1000 <= etc_count < 10000:
+            count_font_size = 22
+            x_offset = 0
+            y_offset = 4
+            padding = 4
+        elif 10000 <= etc_count:
+            count_font_size = 22
+            x_offset = 9
+            y_offset = 4
+            padding = 2
+        else:
+            count_font_size = 30
+            x_offset = 0
+            y_offset = 0
+            padding = 6
+
+        x, y = text_size('HalvarBreit-XBd-5.ttf', count_font_size, str(etc_count))
 
 
-    draw = ImageDraw(blank)
+        img = round_square(
+            size=(x + padding * 2, 30),
+            radii=(6, 6, 6, 6),  # (tl, tr, br, bl)
+            color=(42, 51, 58, 255),
+            iOS=True
+        )
+        blank = paste_correctly(blank, (600+pad-10-x-padding*2+x_offset, 200), img)
 
-    text_draw(draw, (600+pad-10-x-padding+x_offset, 205+y_offset), 'HalvarBreit-XBd-5.ttf', count_font_size, str(etc_count), (23,28,32))
-    text_draw(draw, (600+pad-10, 175), 'HalvarBreit-XBd-5.ttf', 30, str(pp)+'%', (42, 51, 58), pos=2)
+
+        draw = ImageDraw(blank)
+
+        text_draw(draw, (600+pad-10-x-padding+x_offset, 205+y_offset), 'HalvarBreit-XBd-5.ttf', count_font_size, str(etc_count), (23,28,32))
+        text_draw(draw, (600+pad-10, 175), 'HalvarBreit-XBd-5.ttf', 30, str(pp)+'%', (42, 51, 58), pos=2)
 
 
-blank.paste(line, (0,160))
+    blank.paste(line, (0,160))
 
-blank.show()
-blank.save('111.png')
+    return blank
+
+
+if __name__ == '__main__':
+    data = {'members': [{'count': 139, 'name': 'DaHyun', 'percentage': 70},
+                        #{'count': 37, 'name': 'YeonJi', 'percentage': 10},
+                        {'count': 34, 'name': 'YooYeon', 'percentage': 30}],
+            'seasons': [{'count': 3, 'name': 'Atom01'},
+                        {'count': 14, 'name': 'Binary01'},
+                        {'count': 12, 'name': 'Cream01'},
+                        {'count': 38, 'name': 'Divine01'},
+                        {'count': 33, 'name': 'Ever01'}],
+            'total': 376}
+
+    member_rank(data).show()
