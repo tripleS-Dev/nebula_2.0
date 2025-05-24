@@ -1,6 +1,11 @@
 import os
 
+
+# Your authorization token
+
 bot_token = os.getenv('nebula_clean')
+apollo_token = os.getenv('apollo_api')
+
 
 SEASONS = {
     'tripleS': ['Atom01', 'Binary01', 'Cream01', 'Divine01', 'Ever01', 'Atom02'],
@@ -47,5 +52,6 @@ member_color = {
     'kimlip': (239, 24, 65),
     'jinsoul': (25, 36, 167),
     'choerry': (90, 43, 146),
-    'none': (0,0,0)
+    'none': (0,0,0),
+    'idntt': (37, 52, 124)
 }

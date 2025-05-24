@@ -8,7 +8,7 @@ apollo_api = os.getenv('apollo_api')
 AUTH_TOKEN = apollo_api
 
 
-async def get_stats(address: str, artist: str):
+async def stats(address: str, artist: str):
     base_url = f'https://apollo.cafe/api/user/by-address/{address}/stats'
 
     url = f"{base_url}"
