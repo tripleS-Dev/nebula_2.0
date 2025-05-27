@@ -122,7 +122,7 @@ def member_rank(data) -> Image.Image:
 
         img = round_square(
             size=(600+pad, 240-40*count),
-            radii=(rounds, 16, rounds, 32),  # (tl, tr, br, bl)
+            radii=(rounds, 16, rounds, 18),  # (tl, tr, br, bl)
             color=member_color.get(member['name'].lower(), 'none'),
             iOS=True if count == 0 else False
         )

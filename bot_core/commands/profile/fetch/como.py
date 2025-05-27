@@ -26,7 +26,6 @@ async def como(address: str, artist: str):
             if response.status == 200:  # Request successful
                 result = await response.json()
                 new_dict = {}
-
                 for i in result:
                     for k in range(len(list(result[i].keys()))):
 

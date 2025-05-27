@@ -3,7 +3,7 @@ from pathlib import Path
 
 from PIL import Image
 from PIL.ImageDraw import ImageDraw
-import fetch
+from . import fetch
 from image_maker import member_rank, nameplate, icon_number_box, como_calendar
 from utils import paste_correctly, text_draw, round_square, text_size
 
@@ -12,12 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent
 async def image_maker(address, artist, cosmo_id, discord_id = None):
     data = {}
     images = {}
-    base = Image.open(f"{BASE_DIR}/resources/base.png")
+    base = Image.open(f"{BASE_DIR}/resources/base_{artist.lower()}.png")
 
 
     data['stats'] =  await fetch.stats(address, artist)
     data['date'] = await fetch.singup_date(address, artist)
-    data['como_count'], data['como_calendar'] = await fetch.como(address, artist)
+    data['como_per_month'], data['como_calendar'] = await fetch.como(address, artist)
 
     base = nameplate(base, cosmo_id, discord_id, data['date'])
 
@@ -41,13 +41,19 @@ async def image_maker(address, artist, cosmo_id, discord_id = None):
         if images.get('como_count'):
             base = paste_correctly(base, (1271, 172), images['como_count'])
 
+    if data.get('como_per_month'):
+        images['per_month'] = Image.open(f"{BASE_DIR}/resources/per_month.png")
+        draw = ImageDraw(base)
+        x, *_ = text_draw(draw, (1649, 263), 'HalvarBreit-Bd-5.ttf', 40, str(data['como_per_month']), (231, 221, 255))
+        base = paste_correctly(base, (1649+x+1, 263+11), images['per_month'])
+
     if data.get('como_calendar'):
         images['calendar'] = como_calendar(data['como_calendar'])
 
         if images.get('calendar'):
             base = paste_correctly(base, (1291, 414), images['calendar'])
 
-    base = paste_correctly(base, (1220, 96), Image.open(f"{BASE_DIR}/resources/bookmark/{artist.lower()}.png"))
+    #base = paste_correctly(base, (1220, 96), Image.open(f"{BASE_DIR}/resources/bookmark/{artist.lower()}.png"))
 
     return base
 
