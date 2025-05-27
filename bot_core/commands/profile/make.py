@@ -4,7 +4,7 @@ from pathlib import Path
 from PIL import Image
 from PIL.ImageDraw import ImageDraw
 from . import fetch
-from image_maker import member_rank, nameplate, icon_number_box, como_calendar
+from .image_maker import member_rank, nameplate, icon_number_box, como_calendar
 from utils import paste_correctly, text_draw, round_square, text_size
 
 BASE_DIR = Path(__file__).resolve().parent
