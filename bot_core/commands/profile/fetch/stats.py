@@ -75,4 +75,4 @@ def normalize_counts_integer(data):
 
 
 if __name__ == '__main__':
-    asyncio.run(get_stats('0xAcb9f541D5F3A585500434f8A1D70864553415E7', 'tripleS'))
+    asyncio.run(stats('0xAcb9f541D5F3A585500434f8A1D70864553415E7', 'tripleS'))

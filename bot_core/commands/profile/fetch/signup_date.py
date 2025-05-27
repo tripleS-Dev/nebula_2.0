@@ -20,6 +20,7 @@ async def singup_date(address: str, artist):
         async with session.get(url) as response:
             if response.status == 200:  # Request successful
                 result = await response.json()
+                #print(result)
                 return result['objekts'][0]['receivedAt'].split('T')[0]
             else:  # Request failed
                 print(
@@ -28,4 +29,4 @@ async def singup_date(address: str, artist):
 
 
 if __name__ == '__main__':
-    asyncio.run(singup_date('0xAcb9f541D5F3A585500434f8A1D70864553415E7', 'triples'))
+    asyncio.run(singup_date('0xAcb9f541D5F3A585500434f8A1D70864553415E7', 'idntt'))
