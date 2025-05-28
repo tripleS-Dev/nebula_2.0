@@ -34,11 +34,11 @@ def save_value(uuid_str: int, payload: dict) -> None:
         conn.commit()
 
 def get_value(uuid_str: int) -> dict | None:
-    """없으면 None."""
+    """없으면 {}."""
     with closing(sqlite3.connect(DB_PATH)) as conn:
         cur = conn.execute("SELECT value FROM user_data WHERE uuid = ?", (uuid_str,))
         row = cur.fetchone()
-        return json.loads(row[0]) if row else None
+        return json.loads(row[0]) if row else {}
 
 def update_value(uuid_str: int, **patch) -> None:
     """

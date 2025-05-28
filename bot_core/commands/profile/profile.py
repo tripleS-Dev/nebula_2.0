@@ -24,29 +24,41 @@ async def profile(
 
     if cosmo_id:
         if '|' in cosmo_id:
-            cosmo_id_input = cosmo_id.split('|')[0]
-            address = cosmo_id.split('|')[1]
+            await action.response.send_message("Cannot use '|'")
+            return
+
+        verify = cosmo_id_verify(action, cosmo_id)
+        if '|' in verify:
+            cosmo_id_input = verify.split('|')[0]
+            address = verify.split('|')[1]
 
         else:
-            verify = cosmo_id_verify(action, cosmo_id)
-            if '|' in verify:
-                cosmo_id_input = verify.split('|')[0]
-                address = verify.split('|')[1]
+            return await action.response.send_message(verify)
 
-            else:
-                return await action.response.send_message(verify)
-    elif db.get_value(action.user.id).get('cosmo').get('address'):
+    elif db.get_value(action.user.id).get('cosmo'):
         cosmo_id_input = db.get_value(action.user.id).get('cosmo').get('id')
         address = db.get_value(action.user.id).get('cosmo').get('address')
+    else:
+        await action.response.send_modal(cosmo_id_modal(artist))
 
+        return
+
+
+    await main(action, address, artist, cosmo_id_input, discord_id)
+
+async def main(action, address, artist, cosmo_id_input, discord_id):
     await action.response.defer(ephemeral=False)
 
+
     img = await image_maker(address, artist, cosmo_id_input, discord_id)
+    if isinstance(img, str):
+        await action.followup.send(img, ephemeral=True)
+        return
 
     # 이미지 저장
     buffered_image = BytesIO()
     # img.save(buffered_image, format="webp", subsampling=10, quality=90)
-    img.show()
+    #img.show()
     img.convert('RGB').save(buffered_image, format="jpeg", subsampling=10, quality=90)
     # img.save(buffered_image, format="png", optimize=False)
     buffered_image.seek(0)
@@ -56,10 +68,28 @@ async def profile(
     )
 
 
-
 @profile.autocomplete("cosmo_id")
 async def cosmo_id_autocomplete(
     interaction: discord.Interaction,
     current: str  # 사용자가 지금까지 입력한 텍스트
 ) -> list[app_commands.Choice[str]]:
     return auto_complete.cosmo_id(interaction, current)
+
+
+class cosmo_id_modal(ui.Modal, title="Nebula"):
+    name = ui.TextInput(label="cosmo id", placeholder="Jpark", max_length=16, style=discord.TextStyle.short)
+    def __init__(self, artist):
+        super().__init__(timeout=None)
+
+        self.artist = artist
+    #remember = ui.Button(label="Remember this nickname")
+
+    async def on_submit(self, action: discord.Interaction):
+        verify = cosmo_id_verify(action, str(self.name))
+
+        if '|' in verify:
+            #await action.response.send_message(f"{verify.split('|')[0]}", ephemeral=True)
+            await main(action, verify.split('|')[1], self.artist, verify.split('|')[0], None)
+
+        else:
+            return await action.response.send_message(verify)

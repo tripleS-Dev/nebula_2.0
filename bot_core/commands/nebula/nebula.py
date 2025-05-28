@@ -20,13 +20,15 @@ async def nebula(
 
     if set_cosmo_id:
         if '|' in set_cosmo_id:
-            db.update_value(action.user.id, cosmo={'id': set_cosmo_id.split('|')[0], 'address': set_cosmo_id.split('|')[1]})
+            #db.update_value(action.user.id, cosmo={'id': set_cosmo_id.split('|')[0], 'address': set_cosmo_id.split('|')[1]})
+            await action.response.send_message("Cannot use '|'")
+            return
+
+        verify = cosmo_id_verify(action, set_cosmo_id)
+        if '|' in verify:
+            db.update_value(action.user.id, cosmo={'id': verify.split('|')[0], 'address': verify.split('|')[1]})
         else:
-            verify = cosmo_id_verify(action, set_cosmo_id)
-            if '|' in verify:
-                db.update_value(action.user.id, cosmo={'id': verify.split('|')[0], 'address': verify.split('|')[1]})
-            else:
-                return await action.response.send_message(verify)
+            return await action.response.send_message(verify)
 
     await action.response.send_message(str(db.get_value(action.user.id)))
 

@@ -6,7 +6,7 @@ import aiohttp
 import difflib
 
 
-def cosmo_id(action: Interaction, name: str) -> list[app_commands.Choice[str]]:
+def cosmo_id(action: Interaction, name: str, address = None) -> list[app_commands.Choice[str]]:
     """apollo.cafe 사용자 검색(동기 버전)"""
     if '|' in name:
         return [app_commands.Choice(name="Cannot use '|'", value='0')]
@@ -38,7 +38,7 @@ def cosmo_id(action: Interaction, name: str) -> list[app_commands.Choice[str]]:
 
                 # 4) Choice 리스트로 변환
                 return [
-                    app_commands.Choice(name=user["nickname"], value=user["nickname"]+'|'+user["address"])
+                    app_commands.Choice(name=user["nickname"], value=user["nickname"]+(f"|{user['address']}" if address else ''))
                     for user in sorted_users
                 ]
     except requests.RequestException as err:

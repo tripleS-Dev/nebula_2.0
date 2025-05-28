@@ -1,5 +1,6 @@
 import asyncio
 import os
+from datetime import datetime
 from pprint import pprint
 
 import aiohttp
@@ -24,6 +25,9 @@ async def stats(address: str, artist: str):
                     if one['artistName'] == artist.lower():
                         result_artist = one
                         break
+                else:
+                    data = None
+                    return None
 
                 data = {
                     'total': sum(d['count'] for d in result_artist['classes']),

@@ -16,6 +16,9 @@ async def image_maker(address, artist, cosmo_id, discord_id = None):
 
 
     data['stats'] =  await fetch.stats(address, artist)
+    if data['stats'] == None:
+        return 'This account has no objekt'
+
     data['date'] = await fetch.singup_date(address, artist)
     data['como_per_month'], data['como_calendar'] = await fetch.como(address, artist)
 
