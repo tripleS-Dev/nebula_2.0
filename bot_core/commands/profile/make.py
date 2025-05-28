@@ -50,7 +50,7 @@ async def image_maker(address, artist, cosmo_id, discord_id = None):
         x, *_ = text_draw(draw, (1649, 263), 'HalvarBreit-Bd-5.ttf', 40, str(data['como_per_month']), (231, 221, 255))
         base = paste_correctly(base, (1649+x+1, 263+11), images['per_month'])
 
-    if data.get('como_calendar'):
+    if not data.get('como_calendar', {}) == {}:
         images['calendar'] = como_calendar(data['como_calendar'])
 
         if images.get('calendar'):

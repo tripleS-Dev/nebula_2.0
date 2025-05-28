@@ -32,7 +32,7 @@ async def como(address: str, artist: str):
                         if list(result[i].keys())[k] == objekt_contract[artist.lower()].lower():
                             new_dict[int(i)] = result[i][objekt_contract[artist.lower()].lower()]['count']
 
-                return sum(new_dict.values()), new_dict
+                return str(sum(new_dict.values())), new_dict
 
             else:  # Request failed
                 print(
