@@ -61,8 +61,42 @@ objekt_contract = {
     'triples': "0xA4B37bE40F7b231Ee9574c4b16b7DDb7EAcDC99B",
     'artms': '0x0fB69F54bA90f17578a59823E09e5a1f8F3FA200',
     'idntt': '0x0000000000000000000000000000000000000000'
+
 }
 
+
+como_contract = {
+    'abstract': {
+        'triples': "0xd0EE3ba23a384A8eeFd43f33A957dED60eD12706",
+        'artms': '0xd0EE3ba23a384A8eeFd43f33A957dED60eD12706',
+        'idntt': '0xd0EE3ba23a384A8eeFd43f33A957dED60eD12706'
+    },
+    'polygon': {
+        'triples': "0x58AeABfE2D9780c1bFcB713Bf5598261b15dB6e5",
+        'artms': '0x8254D8D2903B20187cBC4Dd833d49cECc219F32E',
+        'idntt': '0x0000000000000000000000000000000000000000'
+    }
+}
+
+
+gravity_address = {
+    'abstract': {
+        'triples': "0xF1A787da84af2A6e8227aD87112a21181B7b9b39",
+        'artms': '0xF1A787da84af2A6e8227aD87112a21181B7b9b39',
+        'idntt': '0xF1A787da84af2A6e8227aD87112a21181B7b9b39'
+    },
+    'polygon': {
+        'triples': "0xc3E5ad11aE2F00c740E74B81f134426A3331D950",
+        'artms': '0x8466e6E218F0fe438Ac8f403f684451D20E59Ee3',
+        'idntt': '0x0000000000000000000000000000000000000000'
+    }
+}
+
+abstract_como_token_id = {
+    'triples': '0x01',
+    'artms': '0x02',
+    'idntt': '0x03'
+}
 
 calender_colors = {                                  # 꼬모수: [배경색, 글자색]
     0: [(34,  38,  43),  (231, 221, 255)],  # '#22262B', '#E7DDFF'
